@@ -21,7 +21,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="relative w-full lg:grid min-h-screen lg:grid-cols-2 content-center">
+    <div className="relative w-full min-h-screen content-center">
       {/* <a href="https://ottolabs.ai" target="_blank" className="absolute left-2 top-3 flex items-center space-x-2">
         <Logomark className="h-11 w-11" />
       </a> */}
@@ -55,15 +55,15 @@ export default function Auth() {
           </form>
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
-        <Image
+      {/* <div className="hidden bg-muted lg:block"> */}
+        {/* <Image
           src="/placeholder.svg"
           alt="Image"
           width="1920"
           height="1080"
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
+        /> */}
+      {/* </div> */}
       <div className="w-full fixed bottom-0 text-center py-4 text-slate-400 text-[.9rem]">
         Powered By <a href="https://ottolabs.ai" target="_blank" className="font-bold">Ottolabs.</a>
       </div>
