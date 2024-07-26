@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Package2, Search, CircleUser, Menu } from "lucide-react"
+import { Package2, Search, CircleUser, LogOut } from "lucide-react"
 
 import { Logomark } from "@/components/ottolabs/Logo"
 
@@ -82,7 +82,12 @@ export default function Header() {
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem>
+            <Link href="/auth/signout" className="flex items-center space-x-2">
+              <LogOut size="16" />
+              <span>Logout</span>
+            </Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

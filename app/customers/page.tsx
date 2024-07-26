@@ -1,6 +1,8 @@
-"use client"
 import React from 'react'
+
 import { useCustomers, useCreateCustomer, useUpdateCustomer } from '@/hooks/useCustomers'
+
+import ProtectedPage from "@/components/layout/protected-page"
 import CustomersTable from './components/customers-table'
 
 export default function Dashboard() {
@@ -30,6 +32,8 @@ export default function Dashboard() {
   
   // console.log(customers)
   return (
-    <CustomersTable />
+    <ProtectedPage>
+      <CustomersTable />
+    </ProtectedPage>
   )
 }

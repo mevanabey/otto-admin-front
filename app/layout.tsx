@@ -5,8 +5,6 @@ import "./globals.css";
 import QueryProvider from "@/components/wrappers/query-provider";
 import { ThemeProvider } from "@/components/wrappers/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import Header from "@/components/layout/header"
-import Navigation from "@/components/layout/navigation"
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -32,11 +30,8 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <TooltipProvider>
-                <Header />
                 
                 {children}
-                
-                <Navigation />
                 
               </TooltipProvider>
             </ThemeProvider>

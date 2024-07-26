@@ -1,6 +1,10 @@
+import ProtectedPage from "@/components/layout/protected-page"
+
 export default function Component() {
     return (
-      <>Inventory</>
+      <ProtectedPage>
+        Inventory
+      </ProtectedPage>
     )
   }
   
