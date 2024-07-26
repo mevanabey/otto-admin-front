@@ -188,7 +188,7 @@ export default function CustomersTable() {
   console.log('CUSTAS: ', customers)
 
   return (
-    <Card>
+    <div>
       <CardHeader className="px-7">
         <CardTitle>Manage Customers</CardTitle>
         <CardDescription className="flex justify-between items-center">
@@ -280,6 +280,6 @@ export default function CustomersTable() {
           </div>
         </div>
       </CardContent>
-    </Card>
+    </div>
   )
 }

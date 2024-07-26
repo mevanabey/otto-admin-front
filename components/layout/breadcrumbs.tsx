@@ -25,7 +25,7 @@ const Breadcrumbs: React.FC = () => {
   const breadcrumbs = React.useMemo(() => generateBreadcrumbs(pathname), [pathname]);
 
   return (
-    <Breadcrumb className="p-4">
+    <Breadcrumb className="px-8 pt-4">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>

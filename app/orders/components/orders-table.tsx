@@ -226,11 +226,11 @@ export default function OrdersTable() {
   console.log(data)
 
   return (
-    <Card>
+    <div>
       <CardHeader className="px-7">
         <CardTitle>Orders</CardTitle>
         <CardDescription className="flex justify-between">
-          Recent orders from your store.
+          Manage Crafting Magic Orders.
           <Button
             size="sm"
             variant="outline"
@@ -318,6 +318,6 @@ export default function OrdersTable() {
           </div>
         </div>
       </CardContent>
-    </Card>
+    </div>
   )
 }
