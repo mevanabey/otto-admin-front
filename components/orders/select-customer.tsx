@@ -26,7 +26,7 @@ import { CustomersType, OrderUpdateType } from "@/utils/global.types"
 
 
 interface SelectCustomerFormProps {
-  selectedCustomer?: string
+  selectedCustomer?: string | null
   customers?: CustomersType[]
   onSelectCustomer?: (customerId: number) => void
 }

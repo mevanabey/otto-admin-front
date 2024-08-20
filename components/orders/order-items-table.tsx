@@ -36,7 +36,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { OrderItemForm } from "@/components/orders/order-items-form"
-import { AddEditOrderItem } from "@/components/orders/add-edit-order-item"
 import { OrderItemsType } from "@/utils/global.types"
 
 interface OrderItemsTableProps {
@@ -103,7 +102,7 @@ export function OrderItemsTable({ orderId, orderItems }: OrderItemsTableProps) {
                               <DialogDescription>
                                 {dialogType === 'edit' ? (
                                   <>
-                                    Make changes to the order item here. Click save when you're done.
+                                    Make changes to the order item here. Click save when you&apos;re done.
                                   </>
                                 ) : (
                                   <>
@@ -159,7 +158,7 @@ export function OrderItemsTable({ orderId, orderItems }: OrderItemsTableProps) {
                 <DialogHeader>
                   <DialogTitle>Add Order Item</DialogTitle>
                   <DialogDescription>
-                    Add new order item details. Click save when you're done.
+                    Add new order item details. Click save when you&apos;re done.
                   </DialogDescription>
                 </DialogHeader>
                 <OrderItemForm orderId={orderId} onAfterSubmit={() => setAddDialogState(false)} />

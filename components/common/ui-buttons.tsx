@@ -1,5 +1,3 @@
-import QuoteGenerator from "@/utils/pdfgen/generate-quote"
-
 import { ArrowUpDown, MoreHorizontal, SquarePen, SquarePlus, PrinterIcon } from "lucide-react"
 
 import {

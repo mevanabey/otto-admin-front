@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 
-export default function Header({ user }) {
+export default function Header() {
   const pathname = usePathname()
 
   const isActive = (path: string) => {

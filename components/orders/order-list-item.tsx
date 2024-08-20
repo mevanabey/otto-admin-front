@@ -11,7 +11,7 @@ import { OrderState } from "@/components/common/order-states"
 import { PaymentState } from "@/components/common/payment-states"
 import { OrderType } from "@/components/common/order-types"
 
-export const OrderListItem = ({ order }: { order: ExtendedOrderType }) => {
+export const OrderListItem = ({ order }: { order: any }) => {
   return (
     <Card className="w-full">
         <div className="grid gap-4">

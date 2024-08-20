@@ -118,9 +118,9 @@ export function useUpdateOrder() {
       // Invalidate and refetch the specific order
       const newUpdatedOrder = {
         ...updatedOrder,
-        itemCount: updatedOrder.cm_order_items.length,
-        customerName: updatedOrder.cm_customers?.name || '',
-        customerPhone: updatedOrder.cm_customers?.phone || ''
+        // itemCount: updatedOrder.cm_order_items.length,
+        // customerName: updatedOrder.cm_customers?.name || '',
+        // customerPhone: updatedOrder.cm_customers?.phone || ''
       };
 
       queryClient.invalidateQueries({ queryKey: ['order', updatedOrder.id] })

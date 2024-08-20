@@ -63,7 +63,7 @@ export function OrderItemForm({ orderId, orderItem, onAfterSubmit }: OrderItemsF
   };
 
   const calculateTotal = (data: OrderItemsUpdateType) => {
-    const total = data.quantity * data.unit_price || 0;
+    const total = data?.quantity && data?.unit_price ? data.quantity * data.unit_price : 0;
     setFormData(prev => ({ ...prev, item_total: total }));
   };
 
@@ -75,7 +75,8 @@ export function OrderItemForm({ orderId, orderItem, onAfterSubmit }: OrderItemsF
     try {
       const quantity = formData.quantity || 1;
       const artworkCost = formData.artwork_cost || 0;
-      const materialCost = materials?.find((material: MaterialType) => material.id === formData.material)?.base_price * (formData?.sheet_qty || 1) || 0;
+      const selectedMaterial = materials?.find((material: MaterialType) => material.id === formData.material);
+      const materialCost = selectedMaterial ? selectedMaterial.base_price * (formData?.sheet_qty || 1) : 0;
 
       const subTotal = artworkCost + materialCost;
       
@@ -99,7 +100,8 @@ export function OrderItemForm({ orderId, orderItem, onAfterSubmit }: OrderItemsF
       try {
         const quantity = formData.quantity || 1;
         const artworkCost = formData.artwork_cost || 0;
-        const materialCost = materials?.find((material: MaterialType) => material.id === formData.material)?.base_price * (formData?.sheet_qty || 1) || 0;
+        const selectedMaterial = materials?.find((material: MaterialType) => material.id === formData.material);
+      const materialCost = selectedMaterial ? selectedMaterial.base_price * (formData?.sheet_qty || 1) : 0;
 
         const subTotal = artworkCost + materialCost;
 
@@ -183,8 +185,7 @@ export function OrderItemForm({ orderId, orderItem, onAfterSubmit }: OrderItemsF
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label htmlFor="material">Material</Label>
-            <Select 
-              id="material"
+            <Select
               value={formData?.material?.toString() || ''}
               onValueChange={(value) => handleInputChange('material', parseInt(value))}
             >
@@ -193,7 +194,7 @@ export function OrderItemForm({ orderId, orderItem, onAfterSubmit }: OrderItemsF
               </SelectTrigger>
               <SelectContent>
                 {materials?.map((material: MaterialType) => (
-                  <SelectItem value={material.id.toString()}>{material.type} {material.thickness}mm</SelectItem>
+                  <SelectItem key={material.id} value={material.id.toString()}>{material.type} {material.thickness}mm</SelectItem>
                 ))}
               </SelectContent>
             </Select>

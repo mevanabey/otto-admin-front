@@ -84,7 +84,7 @@ export const OrderList = () => {
       {orders?.length ? (
         <div className="space-y-4">
           {orders.map(order => (
-            <OrderListItem order={order} />
+            <OrderListItem key={order.id} order={order} />
           ))}
         </div>) : (
           <Card className="p-8 text-center">No orders found.</Card>   
