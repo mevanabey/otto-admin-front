@@ -6,10 +6,11 @@ import { supabase } from '@/utils/supabase/client';
 
 // const supabase = getSupabaseBrowserClient();
 
-export type CustomerType = Database['public']['Tables']['cm_customers']['Row']
+// export type CustomerType = Database['public']['Tables']['cm_customers']['Row']
+import { CustomersType } from '@/utils/global.types';
 
 export function useCustomers() {
-  return useQuery<CustomerType[], Error>({
+  return useQuery<CustomersType[], Error>({
     queryKey: ['customers'],
     queryFn: async () => {
       const { data, error } = await supabase

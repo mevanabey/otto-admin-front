@@ -5,6 +5,7 @@ import "./globals.css";
 import QueryProvider from "@/components/wrappers/query-provider";
 import { ThemeProvider } from "@/components/wrappers/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { Toaster } from "@/components/ui/sonner"
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,12 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <QueryProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning className="dark">
         <body className={inter.className}>
             <ThemeProvider
               attribute="class"
               defaultTheme="dark"
-              enableSystem
               disableTransitionOnChange
             >
               <TooltipProvider>
@@ -35,6 +35,8 @@ export default function RootLayout({
                 
               </TooltipProvider>
             </ThemeProvider>
+
+            <Toaster expand={true} richColors />
         </body>
       </html>
     </QueryProvider>

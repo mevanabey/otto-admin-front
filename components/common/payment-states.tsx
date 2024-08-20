@@ -19,15 +19,15 @@ export const PaymentState: React.FC<PaymentStateProps> = ({ state, className }) 
   const getStateColor = (state: PaymentState): string => {
     switch (state) {
       case 'pending_payment':
-        return 'bg-rose-100 text-rose-800';
+        return 'bg-rose-100 text-rose-800 hover:bg-rose-200';
       case 'partial_payment':
-        return 'bg-amber-100 text-amber-800';
+        return 'bg-amber-100 text-amber-800 hover:bg-amber-200';
       case 'payment_complete':
-        return 'bg-emerald-100 text-emerald-800';
+        return 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200';
       case 'payment_refunded':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800 hover:bg-blue-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
     }
   };
 

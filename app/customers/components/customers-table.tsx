@@ -45,10 +45,13 @@ import {
 import { CustomerTypeBadge } from "@/components/common/customer-types"
 import { PaymentState } from "@/components/common/payment-states"
 import { OrderType } from "@/components/common/order-types"
+import { Loader } from "@/components/ui/loader"
 
-import { useCustomers, CustomerType } from "@/hooks/useCustomers"
+import { CustomersType } from "@/utils/global.types"
 
-const columns: ColumnDef<CustomerType>[] = [
+import { useCustomers } from "@/hooks/useCustomers"
+
+const columns: ColumnDef<CustomersType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -182,7 +185,7 @@ export default function CustomersTable() {
       },
     })
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <Loader />
   if (error) return <div>Error: {error.message}</div>
 
   console.log('CUSTAS: ', customers)

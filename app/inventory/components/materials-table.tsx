@@ -1,8 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { createClient } from "@/utils/supabase/server"
-import { dehydrate, QueryClient, HydrationBoundary } from "@tanstack/react-query"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -44,13 +42,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { orderStates, OrderState } from "@/components/common/order-states"
+import { CustomerTypeBadge } from "@/components/common/customer-types"
 import { PaymentState } from "@/components/common/payment-states"
 import { OrderType } from "@/components/common/order-types"
+import { Loader } from "@/components/ui/loader"
 
-import { useOrders, Order as OrdersType } from '@/hooks/useOrders'
+import { useMaterials } from "@/hooks/useMaterials"
+import { MaterialInsertType, MaterialUpdateType, MaterialType, MaterialUsageType, MaterialUsageInsertType, MaterialUsageUpdateType } from '@/utils/global.types'
 
-const columns: ColumnDef<OrdersType>[] = [
+const columns: ColumnDef<MaterialType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -81,84 +81,38 @@ const columns: ColumnDef<OrdersType>[] = [
     ),
   },
   {
-    accessorKey: "created_at",
-    header: "Order Date",
-    cell: ({ row }) => {
-      return new Date(row.getValue("created_at")).toLocaleDateString()
-    },
+    accessorKey: "type",
+    header: "Type",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("type")}</div>,
   },
   {
-    accessorKey: "state",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <OrderState state={row.getValue("state")} />,
-  },
-  {
-    accessorKey: "customerName",
-    header: "Customer Name",
+    accessorKey: "thickness",
+    header: "Thickness",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("customerName")}</div>
+      <div className="capitalize">{row.getValue("thickness")}</div>
     ),
   },
   {
-    accessorKey: "customerPhone",
-    header: "Customer Phone",
+    accessorKey: "dimensions",
+    header: "Dimensions",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("customerPhone")}</div>
+      <div className="capitalize">{row.getValue("dimensions")}</div>
     ),
   },
   {
-    accessorKey: "order_type",
-    header: "Order Type",
-    cell: ({ row }) => <OrderType type={row.getValue("order_type")} />,
-  },
-  {
-    accessorKey: "itemCount",
-    header: "Item Count",
+    accessorKey: "base_price",
+    header: "Base Price/Sheet",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("itemCount")}</div>
+      <div className="capitalize">{row.getValue("base_price")}</div>
     ),
   },
-  {
-    accessorKey: "payment_state",
-    header: "Payment Status",
-    cell: ({ row }) => <PaymentState state={row.getValue("payment_state")} />,
-  },
-  {
-    accessorKey: "total",
-    header: "Total",
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("total"))
-
-      if(!amount) {
-        return (
-          <Button size="sm" variant="outline" className="h-8 gap-2">
-            <SquarePen className="h-3.5 w-3.5" />
-            <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap text-[0.7rem]">
-              Prepare Quote
-            </span>
-          </Button>
-        )
-      }
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "LKR",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
+  // {
+  //   accessorKey: "ordersCount",
+  //   header: "Orders",
+  //   cell: ({ row }) => (
+  //     <div className="capitalize">{row.getValue("ordersCount")}</div>
+  //   ),
+  // },
   {
     id: "actions",
     enableHiding: false,
@@ -181,8 +135,9 @@ const columns: ColumnDef<OrdersType>[] = [
               Copy payment ID
             </DropdownMenuItem> */}
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Update Stock</DropdownMenuItem>
+            <DropdownMenuItem>Edit Material Details</DropdownMenuItem>
+            <DropdownMenuItem>View Suppliers</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -190,8 +145,8 @@ const columns: ColumnDef<OrdersType>[] = [
   },
 ]
 
-export default function OrdersTable() {
-  const { data, isLoading, error } = useOrders()
+export default function MaterialsTable() {
+  const { data: materials, isLoading, error } = useMaterials()
 
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -202,7 +157,7 @@ export default function OrdersTable() {
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
-      data: data ?? [],
+      data: materials ?? [],
       columns,
       onSortingChange: setSorting,
       onColumnFiltersChange: setColumnFilters,
@@ -220,25 +175,25 @@ export default function OrdersTable() {
       },
     })
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <Loader />
   if (error) return <div>Error: {error.message}</div>
 
-  console.log(data)
+  console.log('CUSTAS: ', materials)
 
   return (
     <div>
       <CardHeader className="px-7">
-        <CardTitle>Orders</CardTitle>
-        <CardDescription className="flex justify-between">
-          Manage Crafting Magic Orders.
-          <Button
+        <CardTitle>Manage Material Inventory</CardTitle>
+        <CardDescription className="flex justify-between items-center">
+          {/* Manage Crafting Magic Customers. */}
+          {/* <Button
             size="sm"
             variant="outline"
             className="h-7 gap-1 text-sm"
           >
             <SquarePlus className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only">New Order</span>
-          </Button>
+            <span className="sr-only sm:not-sr-only">New Customer</span>
+          </Button> */}
         </CardDescription>
       </CardHeader>
       <CardContent>

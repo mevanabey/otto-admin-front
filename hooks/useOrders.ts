@@ -2,11 +2,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Database, Tables, TablesInsert, TablesUpdate } from '@/utils/supabase/database.types';
 import { supabase } from '@/utils/supabase/client';
 
-export type Order = Database['public']['Tables']['cm_orders']['Row']
+// export type Order = Database['public']['Tables']['cm_orders']['Row']
 export type OrderItem = Database['public']['Tables']['cm_order_items']['Row']
+import { OrderType, ExtendedOrderType } from '@/utils/global.types';
 
 export function useOrders() {
-  return useQuery<(Order & { cm_order_items: OrderItem[] })[], Error>({
+  return useQuery<(OrderType & { cm_order_items: OrderItem[] })[], Error>({
     queryKey: ['orders'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -20,28 +21,32 @@ export function useOrders() {
           ),
           cm_order_items (*)
         `)
-
+        .order('created_at', { ascending: false })
       if (error) throw error
       
       return data.map(order => ({
         ...order,
         itemCount: order.cm_order_items.length,
         customerName: order.cm_customers?.name || '',
-        customerPhone: order.cm_customers?.phone || '',
-        cm_customers: undefined
+        customerPhone: order.cm_customers?.phone || ''
       }))
     },
   })
 }
 
 export function useOrder(id: number) {
-  return useQuery<Order & { cm_order_items: OrderItem[] }, Error>({
+  return useQuery<OrderType & { cm_order_items: OrderItem[] }, Error>({
     queryKey: ['orders', id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('cm_orders')
         .select(`
           *,
+          cm_customers (
+            id,
+            name,
+            phone
+          ),
           cm_order_items (*)
         `)
         .eq('id', id)
@@ -93,14 +98,45 @@ export function useUpdateOrder() {
         .from('cm_orders')
         .update(updateData)
         .eq('id', id)
+        .select(`
+          *,
+          cm_customers (
+            id,
+            name,
+            phone,
+            address,
+            company
+          ),
+          cm_order_items (*)
+        `) // Select only the fields you need
         .single()
+      
       if (error) throw error
       return data as Tables<'cm_orders'>
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['orders'] })
-      queryClient.invalidateQueries({ queryKey: ['orders', data.id] })
+    onSuccess: (updatedOrder) => {
+      // Invalidate and refetch the specific order
+      const newUpdatedOrder = {
+        ...updatedOrder,
+        itemCount: updatedOrder.cm_order_items.length,
+        customerName: updatedOrder.cm_customers?.name || '',
+        customerPhone: updatedOrder.cm_customers?.phone || ''
+      };
+
+      queryClient.invalidateQueries({ queryKey: ['order', updatedOrder.id] })
+      
+      // Update the orders list query without refetching
+      queryClient.setQueriesData({ queryKey: ['orders'] }, (oldData: any) => {
+        if (!oldData) return oldData;
+        return oldData.map((order: OrderType) => 
+          order.id === updatedOrder.id ? { ...order, ...newUpdatedOrder } : order
+        );
+      })
     },
+    onError: (error) => {
+      console.error('Failed to update order:', error)
+      // You can add more error handling here, like showing a toast notification
+    }
   })
 }
 
@@ -112,11 +148,14 @@ export function useCreateOrderItem() {
       const { data, error } = await supabase
         .from('cm_order_items')
         .insert(newOrderItem)
+        .select()
         .single()
+
       if (error) throw error
       return data as Tables<'cm_order_items'>
     },
     onSuccess: (data) => {
+      console.log('ON SUCCESS: ', data)
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['orders', data.order_id] })
       queryClient.invalidateQueries({ queryKey: ['orderItems', data.order_id] })
@@ -133,6 +172,7 @@ export function useUpdateOrderItem() {
         .from('cm_order_items')
         .update(updateData)
         .eq('id', id)
+        .select(`*`)
         .single()
       if (error) throw error
       return data as Tables<'cm_order_items'>

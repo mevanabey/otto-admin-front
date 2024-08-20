@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 
-export default function Header() {
+export default function Header({ user }) {
   const pathname = usePathname()
 
   const isActive = (path: string) => {
@@ -30,6 +30,7 @@ export default function Header() {
     { href: "/customers", label: "Customers" },
     { href: "/orders", label: "Orders" },
     { href: "/inventory", label: "Inventory" },
+    { href: "/jobs", label: "Jobs" },
     { href: "/reports", label: "Reports" },
   ]
 
@@ -77,11 +78,11 @@ export default function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            {/* <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator /> */}
             <DropdownMenuItem>
             <Link href="/auth/signout" className="flex items-center space-x-2">
               <LogOut size="16" />
