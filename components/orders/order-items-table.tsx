@@ -49,9 +49,9 @@ export function OrderItemsTable({ orderId, orderItems }: OrderItemsTableProps) {
   const [addDialogState, setAddDialogState] = useState(false);
 
   return (
-    <div className="relative w-full flex-col items-start gap-8 md:flex mt-4">
-      <fieldset className="w-full grid gap-6 rounded-lg border p-4">
-        <legend className="-ml-1 px-1 text-sm font-medium">Order Items</legend>
+    <div className="relative w-full flex-col items-start gap-8 md:flex">
+      <div className="w-full grid gap-6 rounded-lg border p-4">
+      {/* <dt className="text-sm leading-6 text-card-foreground">Order Total</dt> */}
           <Table>
             <TableHeader>
               <TableRow>
@@ -165,7 +165,7 @@ export function OrderItemsTable({ orderId, orderItems }: OrderItemsTableProps) {
               </DialogContent>
             </Dialog>
           </CardFooter>
-        </fieldset>
+        </div>
     </div>
   )
 }

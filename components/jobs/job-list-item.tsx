@@ -40,59 +40,6 @@ export const JobListItem = () => {
     <ul role="list" className="divide-y divide-white/5">
       {deployments.map((deployment: any) => (
         <li key={deployment.id} className="relative flex items-center space-x-4 p-4 hover:bg-muted">
-            <div className="grid gap-4 bg-muted/20 p-4 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CalendarIcon className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">June 26, 2023</span>
-              </div>
-              <Badge variant="secondary" className="text-xs">
-                Fulfilled
-              </Badge>
-            </div>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              <div className="grid gap-1">
-                <span className="text-sm text-muted-foreground">Customer</span>
-                <div className="font-medium">Emma Brown</div>
-              </div>
-              <div className="grid gap-1">
-                <span className="text-sm text-muted-foreground">Phone</span>
-                <div>+1 (555) 555-5558</div>
-              </div>
-              <div className="grid gap-1">
-                <span className="text-sm text-muted-foreground">Source</span>
-                <div>Web</div>
-              </div>
-              <div className="grid gap-1">
-                <span className="text-sm text-muted-foreground">Items</span>
-                <div>1 item</div>
-              </div>
-            </div>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              <div className="grid gap-1">
-                <span className="text-sm text-muted-foreground">Payment</span>
-                <div className="font-medium">Paid</div>
-              </div>
-              <div className="grid gap-1">
-                <span className="text-sm text-muted-foreground">Total</span>
-                <div className="font-medium">$450.00</div>
-              </div>
-              <div className="col-span-2 flex items-center justify-end gap-2">
-                <Button variant="outline" size="sm">
-                  <EyeIcon className="w-4 h-4" />
-                  <span className="sr-only">View</span>
-                </Button>
-                <Button variant="outline" size="sm">
-                  <FilePenIcon className="w-4 h-4" />
-                  <span className="sr-only">Edit</span>
-                </Button>
-                <Button variant="outline" size="sm">
-                  <TrashIcon className="w-4 h-4" />
-                  <span className="sr-only">Delete</span>
-                </Button>
-              </div>
-            </div>
-            </div>
           <div className="min-w-0 flex-auto">
             <div className="flex items-center gap-x-3">
               <div className={cn(statuses[deployment.status], 'flex-none rounded-full p-1')}>
@@ -119,14 +66,20 @@ export const JobListItem = () => {
               <p className="whitespace-nowrap">{deployment.statusText}</p>
             </div>
           </div>
-          <div
-            className={cn(
-              environments[deployment.environment],
-              'flex-none rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset',
-            )}
-          >
-            {deployment.environment}
-          </div>
+          <div className="col-span-2 flex items-center justify-end gap-2">
+                <Button variant="outline" size="sm">
+                  <EyeIcon className="w-4 h-4" />
+                  <span className="sr-only">View</span>
+                </Button>
+                <Button variant="outline" size="sm">
+                  <FilePenIcon className="w-4 h-4" />
+                  <span className="sr-only">Edit</span>
+                </Button>
+                <Button variant="outline" size="sm">
+                  <TrashIcon className="w-4 h-4" />
+                  <span className="sr-only">Delete</span>
+                </Button>
+              </div>
           <ChevronRightIcon aria-hidden="true" className="h-5 w-5 flex-none text-gray-400" />
         </li>
       ))}

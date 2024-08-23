@@ -79,13 +79,14 @@ export function OrderItemForm({ orderId, orderItem, onAfterSubmit }: OrderItemsF
       const materialCost = selectedMaterial ? selectedMaterial.base_price * (formData?.sheet_qty || 1) : 0;
 
       const subTotal = artworkCost + materialCost;
+      const subTotalWithComplexity = subTotal + (subTotal * ((formData.complexity ?? 0) / 100));
       
       const createdOrderItem = await createOrderItem.mutateAsync({
         order_id: orderId,
         ...formData as OrderItemsInsertType,
         quantity,
-        unit_price: subTotal,
-        item_total: subTotal * quantity
+        unit_price: subTotalWithComplexity,
+        item_total: subTotalWithComplexity * quantity
       });
       toast.success('Order item added successfully!');
       onAfterSubmit();
@@ -101,16 +102,19 @@ export function OrderItemForm({ orderId, orderItem, onAfterSubmit }: OrderItemsF
         const quantity = formData.quantity || 1;
         const artworkCost = formData.artwork_cost || 0;
         const selectedMaterial = materials?.find((material: MaterialType) => material.id === formData.material);
-      const materialCost = selectedMaterial ? selectedMaterial.base_price * (formData?.sheet_qty || 1) : 0;
+        const materialCost = selectedMaterial ? selectedMaterial.base_price * (formData?.sheet_qty || 1) : 0;
 
         const subTotal = artworkCost + materialCost;
+        const subTotalWithComplexity = subTotal + (subTotal * ((formData.complexity ?? 0) / 100));
+
+        console.log('subTotalWithComplexity', subTotal, formData.complexity, subTotalWithComplexity);
 
         const updatedOrderItem = await updateOrderItemMutation.mutateAsync({
           id: orderItem.id,
           ...formData,
           quantity,
-          unit_price: subTotal,
-          item_total: subTotal * quantity
+          unit_price: subTotalWithComplexity,
+          item_total: subTotalWithComplexity * quantity
         });
         toast.success('Order item updated successfully!');
         onAfterSubmit();

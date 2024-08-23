@@ -36,7 +36,7 @@ export function useOrders() {
 
 export function useOrder(id: number) {
   return useQuery<OrderType & { cm_order_items: OrderItem[] }, Error>({
-    queryKey: ['orders', id],
+    queryKey: ['order', id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('cm_orders')
@@ -157,7 +157,7 @@ export function useCreateOrderItem() {
     onSuccess: (data) => {
       console.log('ON SUCCESS: ', data)
       queryClient.invalidateQueries({ queryKey: ['orders'] })
-      queryClient.invalidateQueries({ queryKey: ['orders', data.order_id] })
+      queryClient.invalidateQueries({ queryKey: ['order', data.order_id] })
       queryClient.invalidateQueries({ queryKey: ['orderItems', data.order_id] })
     },
   })
@@ -178,8 +178,8 @@ export function useUpdateOrderItem() {
       return data as Tables<'cm_order_items'>
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['order', data.order_id] })
       queryClient.invalidateQueries({ queryKey: ['orders'] })
-      queryClient.invalidateQueries({ queryKey: ['orders', data.order_id] })
       queryClient.invalidateQueries({ queryKey: ['orderItems', data.order_id] })
     },
   })

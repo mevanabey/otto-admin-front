@@ -12,7 +12,7 @@ import {
   MenuItem,
   MenuItems,
 } from '@headlessui/react'
-import { HandCoinsIcon, MoreHorizontalIcon, EllipsisVerticalIcon, SquarePenIcon, SquarePlusIcon, UserPlusIcon, UserCircleIcon, CalendarDaysIcon, CreditCardIcon, CheckCircleIcon, ScanFaceIcon, PaperclipIcon  } from "lucide-react"
+import { HandCoinsIcon, CalendarClockIcon, EllipsisVerticalIcon, BadgePercentIcon, UserCircleIcon, CalendarDaysIcon, MonitorCogIcon, NotebookPenIcon, CogIcon, PrinterIcon, SendIcon, CheckCircleIcon, RefreshCwIcon } from "lucide-react"
 
 
 import { useOrder } from '@/hooks/useOrders'
@@ -29,6 +29,7 @@ import { OrderType } from "@/components/common/order-types"
 import { OrderState } from "@/components/common/order-states"
 import { Card } from '@/components/ui/card'
 import { Loader } from '@/components/ui/loader'
+import { Button } from '@/components/ui/button'
 
 const navigation = [
   { name: 'Home', href: '#' },
@@ -42,8 +43,10 @@ export const OrderDetails = ({ id }: { id: string }) => {
   const { data: order, isLoading, error }: any = useOrder(parseInt(id))
 
   if (isLoading) return <Loader />
-  if (error) return <Card className="p-8 text-center">Error: {error.message}</Card>
+  if (error) return <Card className="p-8 text-center m-4 sm:m-8">No order found.</Card>
   if(!order) return <Card className="p-8 text-center">No order found.</Card>
+
+  const whatsAppQuoteLink = `https://api.whatsapp.com/send?phone=${order.cm_customers?.phone}&text=Please%20find%20requested%20quote%20below/n${order.quote_url}/n/nThank%20you%20for%20your%20business%20and%20have%20a%20great%20day%21`;
 
   return (
     <>
@@ -67,7 +70,7 @@ export const OrderDetails = ({ id }: { id: string }) => {
               <div className="flex items-center gap-x-6">
                 <h1>
                   <div className="flex flex-col space-y-2 text-sm leading-6 text-muted-foreground">
-                    <div>Order <span className="text-foreground">{' '}#{order.id}</span></div>
+                    <div className="text-lg">Order <span className="text-foreground">{' '}#{order.id}</span></div>
                     <OrderState state={order.state} />
                   </div>
                 </h1>
@@ -116,28 +119,30 @@ export const OrderDetails = ({ id }: { id: string }) => {
           </div>
         </header>
 
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto sm:flex sm:space-x-8">
+        <div className="mx-auto max-w-7xl p-4 sm:py-8 sm:px-6 lg:px-8">
+          <div className="mx-auto flex flex-col-reverse sm:flex sm:flex-row sm:space-x-8">
 
-            {/* Invoice */}
             <div className="w-full shadow-sm ring-1 ring-gray-900/5 rounded-lg">
-
-             <OrderDetailsForm order={order} />
-             <OrderItemsTable orderId={order.id} orderItems={order.cm_order_items} />
-
+              {/* <OrderDetailsForm order={order} /> */}
+              <OrderItemsTable orderId={order.id} orderItems={order.cm_order_items} />
+              
+              <Card className="p-4 mt-4">
+                  <OrderHistory order={order} />
+              </Card>  
             </div>
 
-            <div>
-            <div className="">
+            <div className="w-full sm:w-5/12 mb-4 sm:mb-8">
               <h2 className="sr-only">Summary</h2>
-              <div className="rounded-lg bg-card shadow-sm ring-1 ring-border">
+
+
+              <div className="rounded-lg bg-card shadow-sm ring-1 ring-border pb-8">
                 <dl className="flex flex-wrap">
                   <div className="flex-auto pl-6 pt-6">
-                    <dt className="text-sm font-semibold leading-6 text-card-foreground">Amount</dt>
+                    <dt className="text-sm leading-6 text-card-foreground">Order Total</dt>
                     <dd className="mt-1 text-base font-semibold leading-6 text-card-foreground">{formatCurrency(order.total ?? 0)}</dd>
                   </div>
                   <div className="flex-none self-end px-6 pt-4">
-                    <dt className="sr-only">Status</dt>
+                    <dt className="sr-only">Payment Status</dt>
                     <PaymentState state={order.payment_state} />
                   </div>
                   <div className="mt-6 flex w-full flex-none gap-x-4 border-t border-border px-6 pt-6">
@@ -149,7 +154,7 @@ export const OrderDetails = ({ id }: { id: string }) => {
                   </div>
                   <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
                     <dt className="flex-none">
-                      <span className="sr-only">Due date</span>
+                      <span className="sr-only">Created date</span>
                       <CalendarDaysIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
                     </dt>
                     <dd className="text-sm leading-6 text-muted-foreground">
@@ -158,22 +163,96 @@ export const OrderDetails = ({ id }: { id: string }) => {
                   </div>
                   <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
                     <dt className="flex-none">
-                      <span className="sr-only">Status</span>
-                      <HandCoinsIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
+                      <span className="sr-only">Due date</span>
+                      <CalendarClockIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
                     </dt>
-                    <dd className="text-sm leading-6 text-muted-foreground">Bank Transfer</dd>
+                    <dd className="text-sm leading-6 text-muted-foreground">
+                      <time dateTime="2023-01-31">{formatDateToString(order.created_at)}</time>
+                    </dd>
+                  </div>
+                  <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+                    <dt className="flex-none">
+                      <span className="sr-only">Order Type</span>
+                      <MonitorCogIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
+                    </dt>
+                    <dd className="text-sm leading-6 text-muted-foreground">
+                      <OrderType type={order.order_type} />
+                    </dd>
+                  </div>
+                  <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+                    <dt className="flex-none">
+                      <span className="sr-only">Discount</span>
+                      <BadgePercentIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
+                    </dt>
+                    <dd className="text-sm leading-6 text-muted-foreground">
+                      {order.discount}%
+                    </dd>
+                  </div>
+                  <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+                    <dt className="flex-none">
+                      <span className="sr-only">Notes</span>
+                      <NotebookPenIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
+                    </dt>
+                    <dd className="text-sm leading-6 text-muted-foreground">
+                      {order.notes}
+                    </dd>
                   </div>
                 </dl>
-                <div className="mt-6 border-t border-border px-6 py-6">
+              </div>
+              
+              <div className="rounded-lg bg-card shadow-sm ring-1 ring-border">
+              <div className="border-t border-border px-6 py-6 mt-4">
+                  <dt className="text-sm leading-6 text-card-foreground">Quotations</dt>
+                  <div className="grid grid-cols-2 gap-2 mt-2"> 
+                    <Button variant="outline" className="w-full">
+                      <SendIcon className="mr-2 h-4 w-4" />
+                      Send
+                    </Button>
+                    <Button variant="outline" className="w-full">
+                      <PrinterIcon className="mr-2 h-4 w-4" />
+                      Print
+                    </Button>
+                  </div>
+                  <Button variant="outline" className="w-full mt-2">
+                    <CheckCircleIcon className="mr-2 h-4 w-4" />
+                    Mark Sent
+                  </Button>
+                  <Button variant="secondary" className="w-full mt-2">
+                    <RefreshCwIcon className="mr-2 h-4 w-4" />
+                    Regenerate Quote
+                  </Button>
+                  <Button variant="default" className="w-full mt-2">
+                    <CogIcon className="mr-2 h-4 w-4" />
+                    Generate Quote
+                  </Button>
+                </div>
+                <div className="border-t border-border px-6 py-6">
+                  <dt className="text-sm leading-6 text-card-foreground mb-4">Invoices</dt>
+                  <div className="flex w-full flex-none gap-x-4">
+                    <dt className="flex-none">
+                      <span className="sr-only">Payment Method</span>
+                      <HandCoinsIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
+                    </dt>
+                    <dd className="text-sm leading-6 text-muted-foreground mb-4">Bank Transfer</dd>
+                  </div>
                   <a href="#" className="text-sm font-semibold leading-6 text-primary">
-                    Download receipt <span aria-hidden="true">&rarr;</span>
+                    Send quote<span aria-hidden="true">&rarr;</span>
+                  </a>
+                </div>
+                <div className="border-t border-border px-6 py-6">
+                  <dt className="text-sm leading-6 text-card-foreground mb-4">Jobs</dt>
+                  <a href="#" className="text-sm font-semibold leading-6 text-primary">
+                    Send quote<span aria-hidden="true">&rarr;</span>
+                  </a>
+                </div>
+                <div className="border-t border-border px-6 py-6">
+                  <dt className="text-sm leading-6 text-card-foreground mb-4">Dispatch Notes</dt>
+                  <a href="#" className="text-sm font-semibold leading-6 text-primary">
+                    Send quote<span aria-hidden="true">&rarr;</span>
                   </a>
                 </div>
               </div>
-            </div>
-              <Card className="p-4 mt-4">
-                <OrderHistory order={order} />
-              </Card>      
+
             </div>
             
           </div>

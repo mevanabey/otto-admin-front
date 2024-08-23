@@ -55,9 +55,7 @@ export function OrderDetailsForm({ order }: { order: OrderType | undefined }) {
 
   return (
     <div className="relative w-full flex-col items-start gap-8 md:flex">
-      <fieldset className="w-full grid gap-6 rounded-lg border p-4">
-        <legend className="-ml-1 px-1 text-sm font-medium">Order Details</legend>
-
+      <div className="w-full grid gap-6 rounded-lg border p-4">
         <div className="grid gap-6">
           <div className="grid gap-3 grid-cols-2">
             <div>
@@ -86,16 +84,6 @@ export function OrderDetailsForm({ order }: { order: OrderType | undefined }) {
                 onChange={(e) => handleInputChange('discount', parseFloat(e.target.value))}
               />
             </div>
-            <div>
-              <Label htmlFor="order_total">Order Total</Label>
-              <Input
-                id="order_total"
-                type="number"
-                className="w-fit"
-                defaultValue={order?.total || 0}
-                disabled
-              />
-            </div>
           </div>
           <div className="grid gap-3">
             <Label htmlFor="order_notes">Notes</Label>
@@ -107,8 +95,8 @@ export function OrderDetailsForm({ order }: { order: OrderType | undefined }) {
             />
           </div>
         </div>
-        <Button onClick={handleUpdateOrder}>Update Order Details</Button>
-      </fieldset>
+        <Button variant="default" onClick={handleUpdateOrder}>Update Order Details</Button>
+      </div>
     </div>
   )
 }

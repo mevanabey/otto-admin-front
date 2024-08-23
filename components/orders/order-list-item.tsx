@@ -59,10 +59,10 @@ export const OrderListItem = ({ order }: { order: any }) => {
                   <span className="text-xs text-muted-foreground">Payment</span>
                   <PaymentState state={order.payment_state} />
                 </div>
-                <div className="grid">
+                {/* <div className="grid">
                   <span className="text-xs text-muted-foreground">Job State</span>
                   <PaymentState state={order.payment_state} />
-                </div>
+                </div> */}
               </div>
 
               <div className="mt-6 sm:mt-0 flex items-center justify-end gap-2">
