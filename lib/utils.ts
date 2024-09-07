@@ -35,7 +35,7 @@ export function formatDateToString(isoString: string): string {
 
   const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
   };
 
@@ -44,4 +44,25 @@ export function formatDateToString(isoString: string): string {
 
 export function formatCurrency(amount: number, currency: string = 'LKR'): string {
   return `${currency} ${amount.toLocaleString('en-US')}`;
+}
+
+export function generateQuoteNumber(order_id: number): string {
+  const currentMonth = new Date().getMonth() + 1;
+  const randomNumber = Math.floor(Math.random() * 100) + 1;
+
+  return `CMQ/${currentMonth}${randomNumber}/${order_id + 2000}`;
+}
+
+export function generateInvoiceNumber(order_id: number): string {
+  const currentMonth = new Date().getMonth() + 1;
+  const randomNumber = Math.floor(Math.random() * 100) + 1;
+
+  return `CMI/${currentMonth}${randomNumber}/${order_id + 2000}`;
+}
+
+export function generateDispatchNoteNumber(order_id: number): string {
+  const currentMonth = new Date().getMonth() + 1;
+  const randomNumber = Math.floor(Math.random() * 100) + 1;
+
+  return `CMDN/${currentMonth}${randomNumber}/${order_id + 2000}`;
 }

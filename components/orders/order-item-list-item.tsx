@@ -17,7 +17,7 @@ export const OrderListItem = ({ order }: { order: any }) => {
         <div className="grid gap-4">
           <div className="grid gap-4 bg-muted/20 p-4 rounded-lg">
 
-            <div className="flex items-center justify-between sm:justify-start sm:gap-4">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold"><span className="text-muted-foreground font-normal">Order</span> #{order.id}</span>
@@ -66,10 +66,10 @@ export const OrderListItem = ({ order }: { order: any }) => {
               </div>
 
               <div className="mt-6 sm:mt-0 flex items-center justify-end gap-2">
-                {/* <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2">
                   <CogIcon className="w-4 h-4" />
                   Generate Quote
-                </Button> */}
+                </Button>
                 <Link href={`/orders/${order.id}`}>
                   <Button variant="outline" size="sm">
                     <EyeIcon className="w-4 h-4" />

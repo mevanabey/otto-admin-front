@@ -1,14 +1,16 @@
 import { ExtendedOrderType } from "@/utils/global.types"
 
-export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceOptions?: { salesPerson?: string, partialInvoice?: boolean, invoicePercentage?: number, jobId?: string }) => {
+export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceNo: string, invoiceOptions?: { salesPerson?: string, partialInvoice?: boolean, invoicePercentage?: number, jobId?: string }) => {
   const newDate = new Date();
   const dueDate = new Date();
   dueDate.setDate(dueDate.getDate() + 7);
-  const dateFormatOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: '2-digit' };
+  const dateFormatOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: '2-digit' };
   const formattedInvoiceGenDate = newDate.toLocaleDateString('en-US', dateFormatOptions);
   const formattedDueDate = dueDate.toLocaleDateString('en-US', dateFormatOptions);
 
-  const invoiceTotal = order.total ? order.total*(invoiceOptions?.invoicePercentage || 100)/100: 'N/A';
+  const invoiceTotal = order.total*(invoiceOptions?.invoicePercentage || 100)/100 ?? 0;
+  const toBePaid = order.total - invoiceTotal ?? 0;
+
 
     // console.log('print order', order)
   const orderItems = order.cm_order_items.map(item => {
@@ -22,11 +24,11 @@ export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceOptions?: { 
           style:'itemTitle'
       },
       {
-          text: item.unit_price,
+          text: `${item.unit_price.toLocaleString('en-US')} LKR`,
           style:'itemNumber'
       },
       {
-          text: item.item_total,
+          text: `${item.item_total.toLocaleString('en-US')} LKR`,
           style:'itemTotal'
       } 
   ];
@@ -104,7 +106,7 @@ export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceOptions?: { 
                                           
                                       }, 
                                       {
-                                          text: `cm/00${newDate.getMonth()}/${order.id}`,
+                                          text: invoiceNo,
                                           style:'invoiceSubValue',
                                           width: 100
                                           
@@ -168,10 +170,10 @@ export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceOptions?: { 
                           text: 'Payment Terms',
                           style: [ 'itemsHeader', 'center']
                       },
-                      {
-                          text: 'Due Date',
-                          style: [ 'itemsHeader', 'center']
-                      }
+                    //   {
+                    //       text: 'Due Date',
+                    //       style: [ 'itemsHeader', 'center']
+                    //   }
                   ],
                   // Items
                   // Item 1
@@ -183,17 +185,17 @@ export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceOptions?: { 
                       [
                           {
                               text: invoiceOptions?.salesPerson ?? 'N/A',
-                              style:'itemTitle'
+                              style:'itemNumber'
                           },
                       ], 
                       {
                           text: invoiceOptions?.invoicePercentage ? invoiceOptions?.invoicePercentage + '%' : 'Full Payment',
                           style:'itemNumber'
                       },
-                      {
-                          text: invoiceTotal,
-                          style:'itemTotal'
-                      }
+                    //   {
+                    //       text: invoiceTotal,
+                    //       style:'itemTotal'
+                    //   }
                   ],
                 ]
               }, // table
@@ -249,7 +251,7 @@ export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceOptions?: { 
                           style:'itemsFooterSubTitle'
                       }, 
                       { 
-                          text:'$2000.00',
+                          text: `${order.total.toLocaleString('en-US')} LKR`,
                           style:'itemsFooterSubValue'
                       }
                   ],
@@ -259,7 +261,7 @@ export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceOptions?: { 
                           style:'itemsFooterSubTitle'
                       },
                       {
-                          text: '$523.13',
+                          text: `${invoiceTotal.toLocaleString('en-US')} LKR`,
                           style:'itemsFooterSubValue'
                       }
                   ],
@@ -269,7 +271,7 @@ export const pdfInvoiceTemplate = (order: ExtendedOrderType, invoiceOptions?: { 
                           style:'itemsFooterSubTitle'
                       }, 
                       {
-                          text: '$2523.93',
+                          text: `${toBePaid.toLocaleString('en-US')} LKR`,
                           style:'itemsFooterSubValue'
                       }
                   ],

@@ -2,17 +2,14 @@
 
 import { useState } from 'react'
 import {
-  Label,
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-} from '@headlessui/react'
-import { HandCoinsIcon, CalendarClockIcon, EllipsisVerticalIcon, BadgePercentIcon, UserCircleIcon, CalendarDaysIcon, MonitorCogIcon, NotebookPenIcon, CogIcon, PrinterIcon, SendIcon, CheckCircleIcon, RefreshCwIcon } from "lucide-react"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { EyeIcon, CalendarClockIcon, EllipsisVerticalIcon, BadgePercentIcon, UserCircleIcon, CalendarDaysIcon, MonitorCogIcon, NotebookPenIcon, CogIcon, PrinterIcon, SendIcon, CheckCircleIcon, RefreshCwIcon } from "lucide-react"
 
 
 import { useOrder } from '@/hooks/useOrders'
@@ -30,6 +27,9 @@ import { OrderState } from "@/components/common/order-states"
 import { Card } from '@/components/ui/card'
 import { Loader } from '@/components/ui/loader'
 import { Button } from '@/components/ui/button'
+import { GenerateQuotateButton } from "@/components/pdf/quote-button"
+import { GenerateInvoiceButton } from "@/components/pdf/invoice-button"
+import { GenerateDispatchNoteButton } from "@/components/pdf/dispatch-note-button"
 
 const navigation = [
   { name: 'Home', href: '#' },
@@ -45,8 +45,6 @@ export const OrderDetails = ({ id }: { id: string }) => {
   if (isLoading) return <Loader />
   if (error) return <Card className="p-8 text-center m-4 sm:m-8">No order found.</Card>
   if(!order) return <Card className="p-8 text-center">No order found.</Card>
-
-  const whatsAppQuoteLink = `https://api.whatsapp.com/send?phone=${order.cm_customers?.phone}&text=Please%20find%20requested%20quote%20below/n${order.quote_url}/n/nThank%20you%20for%20your%20business%20and%20have%20a%20great%20day%21`;
 
   return (
     <>
@@ -70,50 +68,12 @@ export const OrderDetails = ({ id }: { id: string }) => {
               <div className="flex items-center gap-x-6">
                 <h1>
                   <div className="flex flex-col space-y-2 text-sm leading-6 text-muted-foreground">
-                    <div className="text-lg">Order <span className="text-foreground">{' '}#{order.id}</span></div>
-                    <OrderState state={order.state} />
+                    <div className="flex items-center text-xl space-x-4">
+                      Order <span className="text-foreground">{' '}#{order.id}</span>
+                      <OrderState state={order.state} />
+                    </div>
                   </div>
                 </h1>
-              </div>
-              <div className="flex items-center gap-x-4 sm:gap-x-6">
-                <button type="button" className="hidden text-sm font-semibold leading-6 text-foreground sm:block">
-                  Copy URL
-                </button>
-                <a href="#" className="hidden text-sm font-semibold leading-6 text-foreground sm:block">
-                  Edit
-                </a>
-                <a
-                  href="#"
-                  className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                >
-                  Send
-                </a>
-
-                <Menu as="div" className="relative sm:hidden">
-                  <MenuButton className="-m-3 block p-3">
-                    <span className="sr-only">More</span>
-                    <EllipsisVerticalIcon aria-hidden="true" className="h-5 w-5 text-muted-foreground" />
-                  </MenuButton>
-
-                  <MenuItems
-                    transition
-                    className="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-popover py-2 shadow-lg ring-1 ring-border transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-                  >
-                    <MenuItem>
-                      <button
-                        type="button"
-                        className="block w-full px-3 py-1 text-left text-sm leading-6 text-popover-foreground data-[focus]:bg-accent"
-                      >
-                        Copy URL
-                      </button>
-                    </MenuItem>
-                    <MenuItem>
-                      <a href="#" className="block px-3 py-1 text-sm leading-6 text-popover-foreground data-[focus]:bg-accent">
-                        Edit
-                      </a>
-                    </MenuItem>
-                  </MenuItems>
-                </Menu>
               </div>
             </div>
           </div>
@@ -193,9 +153,16 @@ export const OrderDetails = ({ id }: { id: string }) => {
                       <span className="sr-only">Notes</span>
                       <NotebookPenIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
                     </dt>
-                    <dd className="text-sm leading-6 text-muted-foreground">
-                      {order.notes}
-                    </dd>
+                    {order.notes ? (
+                      <dd className="text-sm leading-6 text-muted-foreground">
+                        {order.notes}
+                      </dd>
+                    ) : (
+                      <div className="w-full mt-2 text-xs underline pointer">
+                        Add notes
+                      </div>
+                    )}
+                    
                   </div>
                 </dl>
               </div>
@@ -203,53 +170,112 @@ export const OrderDetails = ({ id }: { id: string }) => {
               <div className="rounded-lg bg-card shadow-sm ring-1 ring-border">
               <div className="border-t border-border px-6 py-6 mt-4">
                   <dt className="text-sm leading-6 text-card-foreground">Quotations</dt>
-                  <div className="grid grid-cols-2 gap-2 mt-2"> 
-                    <Button variant="outline" className="w-full">
-                      <SendIcon className="mr-2 h-4 w-4" />
-                      Send
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      <PrinterIcon className="mr-2 h-4 w-4" />
-                      Print
-                    </Button>
-                  </div>
-                  <Button variant="outline" className="w-full mt-2">
-                    <CheckCircleIcon className="mr-2 h-4 w-4" />
-                    Mark Sent
-                  </Button>
-                  <Button variant="secondary" className="w-full mt-2">
-                    <RefreshCwIcon className="mr-2 h-4 w-4" />
-                    Regenerate Quote
-                  </Button>
-                  <Button variant="default" className="w-full mt-2">
-                    <CogIcon className="mr-2 h-4 w-4" />
-                    Generate Quote
-                  </Button>
+                  {order.cm_order_quotes.map((quote: any) => (
+                    <dl className="border-b mb-2 flex justify-between py-2 cursor-pointer hover:underline">
+                      <a href={quote.url} target="_blank" rel="noopener noreferrer">
+                        <dt className="text-xs leading-6 text-card-foreground">
+                          {quote.quote_no} - {' '}
+                          <span className="text-muted-foreground">{formatDateToString(quote.created_at)}</span>
+                        </dt>
+                      </a>
+                    </dl>
+                  ))}
+                  {order.quote_url && (
+                    <>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger>
+                            <Button variant="outline" className="w-full">
+                            <SendIcon className="mr-2 h-4 w-4" />
+                              Send
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem>WhatsApp</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>Email</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu> 
+                        
+                        <a href={order.quote_url} target="_blank" rel="noopener noreferrer">
+                          <Button variant="outline" className="w-full">
+                            <PrinterIcon className="mr-2 h-4 w-4" />
+                            Print
+                          </Button>
+                        </a>
+                      </div>
+                    </>
+                  )}
+                  <GenerateQuotateButton order={order} />
                 </div>
-                <div className="border-t border-border px-6 py-6">
-                  <dt className="text-sm leading-6 text-card-foreground mb-4">Invoices</dt>
-                  <div className="flex w-full flex-none gap-x-4">
-                    <dt className="flex-none">
-                      <span className="sr-only">Payment Method</span>
-                      <HandCoinsIcon aria-hidden="true" className="h-6 w-5 text-muted-foreground" />
-                    </dt>
-                    <dd className="text-sm leading-6 text-muted-foreground mb-4">Bank Transfer</dd>
+
+                {order.quote_sent && (
+                  <div className="border-t border-border px-6 py-6">
+                    <dt className="text-sm leading-6 text-card-foreground">Invoices</dt>
+                    {order.cm_order_invoices.map((invoice: any) => (
+                      <dl className="border-b mb-2 flex justify-between py-2 cursor-pointer hover:underline">
+                        <a href={invoice.url} target="_blank" rel="noopener noreferrer">
+                          <dt className="text-xs leading-6 text-card-foreground">
+                            {invoice.invoice_no} - {' '}
+                            <span className="text-muted-foreground">{formatDateToString(invoice.created_at)}</span>
+                          </dt>
+                        </a>
+                      </dl>
+                    ))}
+                    {(order.final_invoice_url || order.partial_invoice_url) && (
+                      <>
+                        <div className="grid grid-cols-2 gap-2 mt-2"> 
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <Button variant="outline" className="w-full">
+                              <SendIcon className="mr-2 h-4 w-4" />
+                                Send
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem>WhatsApp</DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem>Email</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu> 
+                          <a href={order.final_invoice_url || order.partial_invoice_url} target="_blank" rel="noopener noreferrer">
+                            <Button variant="outline" className="w-full">
+                              <PrinterIcon className="mr-2 h-4 w-4" />
+                              Print
+                            </Button>
+                          </a>
+                        </div>
+                      </>
+                    )}
+                    <GenerateInvoiceButton order={order} />
                   </div>
-                  <a href="#" className="text-sm font-semibold leading-6 text-primary">
-                    Send quote<span aria-hidden="true">&rarr;</span>
-                  </a>
-                </div>
+                )}
+
                 <div className="border-t border-border px-6 py-6">
                   <dt className="text-sm leading-6 text-card-foreground mb-4">Jobs</dt>
-                  <a href="#" className="text-sm font-semibold leading-6 text-primary">
+                  <dl className="border-b mb-2 flex justify-between py-2 cursor-pointer hover:underline">
+                    <dt className="text-xs leading-6 text-card-foreground">
+                      #3444 - {' '}
+                      <span className="text-muted-foreground">{formatDateToString(order.created_at)}</span>
+                    </dt>
+                    <dd className="text-sm leading-6 text-muted-foreground">
+                      <EyeIcon className="w-4 h-4" />
+                      <span className="sr-only">View</span>
+                    </dd>
+                  </dl>
+                  <dl className="border-b mb-2 flex justify-between py-2 cursor-pointer hover:underline">
+                    <dt className="text-xs leading-6 text-card-foreground">
+                      #3444 - {' '}
+                      <span className="text-muted-foreground">{formatDateToString(order.created_at)}</span>
+                    </dt>
+                    <dd className="text-sm leading-6 text-muted-foreground">
+                      <EyeIcon className="w-4 h-4" />
+                      <span className="sr-only">View</span>
+                    </dd>
+                  </dl>
+                  {/* <a href="#" className="text-sm font-semibold leading-6 text-primary">
                     Send quote<span aria-hidden="true">&rarr;</span>
-                  </a>
-                </div>
-                <div className="border-t border-border px-6 py-6">
-                  <dt className="text-sm leading-6 text-card-foreground mb-4">Dispatch Notes</dt>
-                  <a href="#" className="text-sm font-semibold leading-6 text-primary">
-                    Send quote<span aria-hidden="true">&rarr;</span>
-                  </a>
+                  </a> */}
                 </div>
               </div>
 

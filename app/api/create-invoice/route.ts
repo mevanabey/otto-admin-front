@@ -6,14 +6,16 @@ import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 
 import { pdfInvoiceTemplate } from '@/utils/pdfgen/invoice-template'
+import { generateInvoiceNumber } from '@/lib/utils'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 export async function POST(req: Request): Promise<Response> {
   const supabase = createClient();
-  const order = await req.json();
+  const { order, invoicePercentage } = await req.json();
+  const invoiceNo = generateInvoiceNumber(order.id);
 
-  const template = pdfInvoiceTemplate(order);
+  const template = pdfInvoiceTemplate(order, invoiceNo, { salesPerson: 'System', invoicePercentage });
 
   const pdfDocGenerator = pdfMake.createPdf(template);
 
@@ -33,7 +35,7 @@ export async function POST(req: Request): Promise<Response> {
           console.error('Error uploading to Supabase:', error);
           reject(NextResponse.json({ error: 'Failed to upload PDF' }, { status: 500 })); // Use reject for error handling
         } else {
-          resolve(NextResponse.json({ message: 'PDF generated and uploaded successfully', path: data.path }, { status: 200 }));
+          resolve(NextResponse.json({ message: 'PDF generated and uploaded successfully', path: data.path, docid: invoiceNo }, { status: 200 }));
         }
       } catch (error) {
         console.error('Unexpected error:', error);

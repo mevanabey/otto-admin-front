@@ -47,12 +47,40 @@ export function useOrder(id: number) {
             name,
             phone
           ),
-          cm_order_items (*)
+          cm_order_items (*),
+          cm_order_invoices (*),
+          cm_order_quotes (*)
         `)
         .eq('id', id)
         .single()
       if (error) throw error
       return data
+    },
+  })
+}
+
+export function useDeleteOrder(id: number) {
+  return useMutation<void, Error, number>({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from('cm_orders')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+    },
+  })
+}
+
+export function useDeleteOrderItem(id: number) {
+  return useMutation<void, Error, number>({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from('cm_order_items')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
     },
   })
 }
@@ -107,7 +135,9 @@ export function useUpdateOrder() {
             address,
             company
           ),
-          cm_order_items (*)
+          cm_order_items (*),
+          cm_order_invoices (*),
+          cm_order_quotes (*)
         `) // Select only the fields you need
         .single()
       

@@ -1,6 +1,6 @@
 import { OrderType } from "@/utils/global.types"
 
-export const pdfInvoiceTemplate = (order: OrderType) => {
+export const pdfDispatchNoteTemplate = (order: OrderType, dnNo: string) => {
   return {
       content: [
           // Header

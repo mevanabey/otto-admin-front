@@ -1,6 +1,6 @@
 import { OrderType } from "@/utils/global.types"
 
-export const pdfInvoiceTemplate = (order: OrderType) => {
+export const pdfQuotationTemplate = (order: OrderType, quoteNo: string) => {
   return {
     content: [
         // Header
@@ -65,7 +65,7 @@ export const pdfInvoiceTemplate = (order: OrderType) => {
                                         
                                     }, 
                                     {
-                                        text:'00001',
+                                        text: quoteNo,
                                         style:'invoiceSubValue',
                                         width: 100
                                         

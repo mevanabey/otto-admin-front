@@ -16,7 +16,12 @@ export type OrderItemsUpdateType = Database['public']['Tables']['cm_order_items'
 export interface ExtendedOrderType extends OrderType {
     cm_customers: CustomersType | null;
     cm_order_items: OrderItemsType[];
+    cm_order_quotes: QuotesType[];
+    cm_order_invoices: InvoicesType[];
 }
+
+export type QuotesType = Database['public']['Tables']['cm_order_quotes']['Row']
+export type InvoicesType = Database['public']['Tables']['cm_order_invoices']['Row']
 
 export type CustomersType = Database['public']['Tables']['cm_customers']['Row']
 export type CustomersInsertType = Database['public']['Tables']['cm_customers']['Insert']

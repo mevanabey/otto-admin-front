@@ -6,6 +6,7 @@ import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 
 import { pdfInvoiceTemplate } from '@/utils/pdfgen/invoice-template'
+import { generateQuoteNumber } from '@/lib/utils'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
@@ -20,12 +21,12 @@ export async function POST(req: Request): Promise<Response> {
   return new Promise((resolve, reject) => { // Add reject to handle errors
     pdfDocGenerator.getBuffer(async (buffer: Buffer) => {
       try {
-        const filename = `invoice_${Date.now()}.pdf`;
+        const filename = `jc_${Date.now()}.pdf`;
 
         const { data, error } = await supabase
           .storage
           .from('documents')
-          .upload(`invoices/${filename}`, buffer, {
+          .upload(`job-cards/${filename}`, buffer, {
             contentType: 'application/pdf',
           });
 

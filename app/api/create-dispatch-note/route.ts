@@ -5,27 +5,29 @@ import pdfMake from 'pdfmake/build/pdfmake'
 // @ts-ignore
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 
-import { pdfInvoiceTemplate } from '@/utils/pdfgen/invoice-template'
+import { pdfDispatchNoteTemplate } from '@/utils/pdfgen/dispatch-note-template'
+import { generateDispatchNoteNumber } from '@/lib/utils'
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 export async function POST(req: Request): Promise<Response> {
   const supabase = createClient();
   const order = await req.json();
+  const dnNo = generateDispatchNoteNumber(order.id);
 
-  const template = pdfInvoiceTemplate(order);
+  const template = pdfDispatchNoteTemplate(order, dnNo);
 
   const pdfDocGenerator = pdfMake.createPdf(template);
 
   return new Promise((resolve, reject) => { // Add reject to handle errors
     pdfDocGenerator.getBuffer(async (buffer: Buffer) => {
       try {
-        const filename = `invoice_${Date.now()}.pdf`;
+        const filename = `dn_${Date.now()}.pdf`;
 
         const { data, error } = await supabase
           .storage
           .from('documents')
-          .upload(`invoices/${filename}`, buffer, {
+          .upload(`dispatch-notes/${filename}`, buffer, {
             contentType: 'application/pdf',
           });
 
@@ -33,7 +35,7 @@ export async function POST(req: Request): Promise<Response> {
           console.error('Error uploading to Supabase:', error);
           reject(NextResponse.json({ error: 'Failed to upload PDF' }, { status: 500 })); // Use reject for error handling
         } else {
-          resolve(NextResponse.json({ message: 'PDF generated and uploaded successfully', path: data.path }, { status: 200 }));
+          resolve(NextResponse.json({ message: 'PDF generated and uploaded successfully', path: data.path, docid: dnNo }, { status: 200 }));
         }
       } catch (error) {
         console.error('Unexpected error:', error);
